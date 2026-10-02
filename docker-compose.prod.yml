@@ -1,0 +1,30 @@
+# Production on arch_home behind Caddy (443 → 127.0.0.1:3002)
+#
+#   cp .env.production.example .env.production   # set RAILS_MASTER_KEY
+#   docker compose -f docker-compose.prod.yml --env-file .env.production up -d --build
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: coolcat-web:latest
+    restart: unless-stopped
+    env_file: .env.production
+    environment:
+      RAILS_ENV: production
+      RAILS_LOG_TO_STDOUT: "1"
+      RAILS_SERVE_STATIC_FILES: "true"
+    ports:
+      - "127.0.0.1:3002:80"
+    volumes:
+      - coolcat_storage:/rails/storage
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:80/up"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+volumes:
+  coolcat_storage:
