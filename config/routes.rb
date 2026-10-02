@@ -3,5 +3,6 @@ Rails.application.routes.draw do
 
   FragmentsController::FRAGMENTS.each_key do |token|
     get "/#{token}", to: "fragments#show", defaults: { token: token }
+    get "/#{token}/piece.jpg", to: "fragments#piece", defaults: { token: token }
   end
 end

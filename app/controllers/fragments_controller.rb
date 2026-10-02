@@ -50,23 +50,45 @@ class FragmentsController < ApplicationController
     }
   }.freeze
 
-  # Keep old constant for routes.rb
   FRAGMENTS = PIECES.transform_values { |p| p[:fragment] }.freeze
 
   def show
-    @token = params[:token]
-    @piece = PIECES[@token]
-    raise ActionController::RoutingError, "Not Found" unless @piece
+    load_piece!
 
     @fragment = @piece[:fragment]
-    piece_file = Rails.root.join("public/pieces/#{@token}.jpg")
+    piece_file = piece_path_for(@token)
     version = piece_file.exist? ? piece_file.mtime.to_i : Time.now.to_i
-    @image_path = "/pieces/#{@token}.jpg?v=#{version}"
+    @image_path = "/#{@token}/piece.jpg?v=#{version}"
 
     respond_to do |format|
       format.html
       format.text { render plain: @fragment }
       format.any { render plain: @fragment }
     end
+  end
+
+  def piece
+    load_piece!
+    path = piece_path_for(@token)
+    raise ActionController::RoutingError, "Not Found" unless path.file?
+
+    expires_in 30.minutes, public: false, must_revalidate: true
+    response.set_header("X-Content-Type-Options", "nosniff")
+    send_file path,
+              type: "image/jpeg",
+              disposition: "inline",
+              filename: "fragment-#{@piece[:index]}.jpg"
+  end
+
+  private
+
+  def load_piece!
+    @token = params[:token].to_s
+    @piece = PIECES[@token]
+    raise ActionController::RoutingError, "Not Found" unless @piece
+  end
+
+  def piece_path_for(token)
+    Rails.root.join("private/pieces/#{token}.jpg")
   end
 end
