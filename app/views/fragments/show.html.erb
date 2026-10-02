@@ -1,0 +1,42 @@
+<% content_for :title, "ZEBRA HUNT · Fragment #{@piece[:index]}/6" %>
+
+<section class="hunt-stage">
+  <div class="hunt-noise" aria-hidden="true"></div>
+  <div class="hunt-stripes" aria-hidden="true"></div>
+
+  <header class="hunt-header">
+    <p class="hunt-eyebrow">RADU COOL CAT</p>
+    <h1 class="hunt-title">ZEBRA HUNT</h1>
+    <p class="hunt-sub">Fragment <%= @piece[:index] %> / 6 · <%= @piece[:label] %></p>
+  </header>
+
+  <div class="hunt-layout">
+    <figure class="hunt-piece">
+      <div class="hunt-piece-frame">
+        <%= image_tag @image_path,
+              alt: "Poster fragment #{@piece[:index]} — #{@piece[:label]}",
+              class: "hunt-piece-img" %>
+        <span class="hunt-piece-tag"><%= format("%02d", @piece[:index]) %></span>
+      </div>
+      <figcaption class="hunt-caption"><%= @piece[:hint] %></figcaption>
+    </figure>
+
+    <aside class="hunt-clue">
+      <p class="hunt-clue-label">COORDONATĂ · PARTEA <%= @piece[:index] %></p>
+      <p class="hunt-clue-value select-all"><%= @fragment %></p>
+      <div class="hunt-grid" aria-label="Poziție pe poster">
+        <% (1..3).each do |r| %>
+          <% (1..2).each do |c| %>
+            <span class="hunt-grid-cell <%= 'is-here' if r == @piece[:row] && c == @piece[:col] %>"></span>
+          <% end %>
+        <% end %>
+      </div>
+      <p class="hunt-clue-note">Păstrează fragmentul. Împreună cu celelalte cinci, formează locul.</p>
+    </aside>
+  </div>
+
+  <footer class="hunt-footer">
+    <span>EXPOZIȚIE PICTURĂ ȘI INSTALAȚIE</span>
+    <span>2–4 OCT · LAYER · GRIVIȚEI 101</span>
+  </footer>
+</section>
